@@ -1,17 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import React from 'react';
 import * as S from './styles';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 import { useRouter } from 'next/navigation';
 
 const SignUpPage: React.FC = () => {
   const router = useRouter();
-  const handleCreateAccount = () => {
+  const handleCreateAccount = (e:any) => {
     router.push('/create_account_page');
   }
-  const handleGoogle = async () => {
+  const handleGoogle = async (e: any) => {
     try {
-      router.push('/username_page');
-    }
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+        router.push('/username_page');
+      }
     catch (error) {
       console.error('Error:', error);
     }
