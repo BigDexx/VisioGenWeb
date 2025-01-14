@@ -1,4 +1,3 @@
-
 'use client'
 import React from 'react';
 import * as S from './styles';
@@ -7,9 +6,9 @@ import { auth } from '../lib/firebase';
 
 const LoginPage: React.FC = () => {
 
-  const handleGoogle = async (e: any) => {
+  const handleGoogle = async () => {
     const provider = await new GoogleAuthProvider();
-      return signInWithPopup(auth,provider)
+    return signInWithPopup(auth,provider)
   }
 
   return (
