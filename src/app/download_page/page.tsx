@@ -34,13 +34,8 @@ const DownloadPage = () => {
         return;
       }
 
-      try {
-        setVideoUrl(data.videoUrl);
-      } catch (err) {
-        setError('Failed to get video');
-      } finally {
-        setIsLoading(false);
-      }
+      setVideoUrl(data.videoUrl);
+      setIsLoading(false);
     };
 
     checkForVideo();
@@ -59,7 +54,7 @@ const DownloadPage = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err) {
+    } catch {
       setError('Failed to download video');
     }
   };

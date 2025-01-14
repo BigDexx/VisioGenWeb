@@ -1,21 +1,17 @@
 'use client'
 import React from 'react';
 import * as S from './styles';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../lib/firebase';
 import { useRouter } from 'next/navigation';
 
 const SignUpPage: React.FC = () => {
   const router = useRouter();
-  const handleCreateAccount = (e:any) => {
+  const handleCreateAccount = () => {
     router.push('/create_account_page');
   }
-  const handleGoogle = async (e: any) => {
+  const handleGoogle = async () => {
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-        router.push('/username_page');
-      }
+      router.push('/username_page');
+    }
     catch (error) {
       console.error('Error:', error);
     }
