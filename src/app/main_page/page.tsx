@@ -183,7 +183,7 @@ const VisioGenEditor: React.FC = () => {
         speechSpeed: 1.0
       };
 
-      const response = await fetch('http://34.131.21.153:5000/endpoint', {
+      const response = await fetch('https://34.131.21.153:5000/endpoint', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
