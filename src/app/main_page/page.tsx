@@ -1,4 +1,5 @@
 'use client'
+import Head from 'next/head';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
@@ -183,7 +184,7 @@ const VisioGenEditor: React.FC = () => {
         speechSpeed: 1.0
       };
 
-      const response = await fetch('https://34.131.21.153:5000/endpoint', {
+      const response = await fetch('http://34.131.21.153:5000/endpoint', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -213,6 +214,9 @@ const VisioGenEditor: React.FC = () => {
 
   return (
     <Container>
+        <Head>
+        <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+      </Head>
       {isLoading && (
         <LoaderOverlay>
           <LoaderContainer>
