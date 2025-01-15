@@ -184,7 +184,7 @@ const VisioGenEditor: React.FC = () => {
         speechSpeed: 1.0
       };
 
-      const response = await fetch('http://dexxtech.xyz/endpoint', {
+      const response = await fetch('https://dexxtech.xyz/endpoint', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
