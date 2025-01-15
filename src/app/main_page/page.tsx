@@ -197,7 +197,7 @@ const VisioGenEditor: React.FC = () => {
       }
 
       const data = await response.json();
-
+      console.log(data)
       // Store both request parameters and response data
       const generationData = {
         ...requestData,
