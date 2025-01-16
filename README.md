@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+What is VisioGen?
+VisioGen is a modern web application that transforms text into engaging short videos using AI technology. This repository contains the frontend interface built with Next.js, while the video generation engine is powered by our Python backend.
+Think of it as your personal video content creator:
 
-## Getting Started
+Input your text
+Our AI processes your content
+Get back a professionally styled video with subtitles and voiceover
 
-First, run the development server:
+Core Capabilities
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🤖 Text-to-Video Generation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Transform written content into dynamic video sequences
+AI-powered scene composition and transitions
+Automatic pacing and timing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🎙️ Voice Synthesis
 
-## Learn More
+Natural-sounding AI voiceovers
+Multiple voice options
+Automatic speech timing and synchronization
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+📝 Smart Subtitles
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Auto-generated, perfectly timed subtitles
+Multiple styling options
+Accessibility-focused design
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Technical Features
+
+🌐 Modern Next.js Frontend
+
+Responsive, mobile-first design
+Server-side rendering for optimal performance
+Real-time preview capabilities
+
+
+🔄 Integration with VisioGen Backend
+
+Seamless API communication
+Robust error handling
+Progress tracking for video generation
