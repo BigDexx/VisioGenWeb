@@ -1,5 +1,4 @@
 
-https://github.com/user-attachments/assets/e2d21bb7-b9db-4b2c-a298-fa2d98e1806d
 # What is VisioGen?
 
 VisioGen is a modern web application that transforms text into engaging short videos using AI technology. This repository contains the frontend interface built with Next.js, while the video generation engine is powered by my [Python backend](https://github.com/BigDexx/VisioGen). Think of it as your personal video content creator:
