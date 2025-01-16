@@ -6,6 +6,10 @@ VisioGen is a modern web application that transforms text into engaging short vi
 2. Our AI processes your content
 3. Get back a professionally styled video with subtitles and voiceover
 
+
+https://github.com/user-attachments/assets/2caeef0b-6718-452c-b154-ee230a5f5a98
+
+
 ## Core Capabilities
 
 ### 🎥 Text-to-Video Generation
@@ -38,7 +42,3 @@ VisioGen is a modern web application that transforms text into engaging short vi
 ![Screenshot 2025-01-16 170254](https://github.com/user-attachments/assets/6591d2c5-d5c6-4bb3-a3a4-ee0d1cb95c0f)
 ![Screenshot 2025-01-16 170239](https://github.com/user-attachments/assets/2d87b87b-84d0-44c4-ac66-bc4db4b7a6c4)
 ![Screenshot 2025-01-16 170220](https://github.com/user-attachments/assets/5dedbecd-d10b-459a-9799-f89b3b65a03c)
-
-
-https://github.com/user-attachments/assets/50ec8175-c42a-4f5f-baff-103f6af9b517
-
