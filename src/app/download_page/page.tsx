@@ -43,6 +43,7 @@ const DownloadPage = () => {
                   setError('Video generation took too long. Try refreshing the page.');
                   setIsLoading(false);
               }
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           } catch (error) {
               if (retryCount < MAX_RETRIES) {
                   retryCount++;
@@ -81,8 +82,12 @@ const DownloadPage = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (error) {
-      setError('Failed to download video: ' + error.message);
+    } catch (error: unknown) {
+      let errorMessage = 'Failed to download video';
+      if (error instanceof Error) {
+        errorMessage += ': ' + error.message;
+      }
+      setError(errorMessage);
     }
   };
 
