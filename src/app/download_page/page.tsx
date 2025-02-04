@@ -44,20 +44,33 @@ const DownloadPage = () => {
   const handleDownload = async () => {
     if (!videoUrl) return;
     try {
-      const response = await fetch(videoUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'generated-video.mp4';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch {
-      setError('Failed to download video');
+        const response = await fetch(videoUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'video/mp4',
+            },
+        });
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const blob = await response.blob();
+        console.log('Blob size:', blob.size);
+        
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'generated-video.mp4';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Download error:', error);
+        setError('Failed to download video: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
-  };
+};
 
   return (
     <Container>
