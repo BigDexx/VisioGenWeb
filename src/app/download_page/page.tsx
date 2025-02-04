@@ -17,34 +17,61 @@ const DownloadPage = () => {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount] = useState(0);
 
   useEffect(() => {
     const checkForVideo = async () => {
-      const generationData = localStorage.getItem('generationData');
-      if (!generationData) {
-        setError('No video generation data found');
-        setIsLoading(false);
-        return;
-      }
-
-      const data = JSON.parse(generationData);
-      if (data.videoUrl) {
-        setVideoUrl(data.videoUrl);
-        setIsLoading(false);
-        return;
-      }
-
-      setVideoUrl(data.videoUrl);
-      setIsLoading(false);
-    };
+      const MAX_RETRIES = 60; // 10 minutes total (10s intervals)
+      let retryCount = 0;
+  
+      const checkVideoStatus = async () => {
+          try {
+              const response = await fetch('https://dexxtech.xyz/endpoint/video', {
+                  method: 'HEAD'
+              });
+  
+              if (response.ok) {
+                  setVideoUrl('https://dexxtech.xyz/endpoint/video');
+                  setIsLoading(false);
+                  return;
+              }
+  
+              if (retryCount < MAX_RETRIES) {
+                  retryCount++;
+                  setTimeout(checkVideoStatus, 10000); // Check every 10 seconds
+              } else {
+                  setError('Video generation took too long. Try refreshing the page.');
+                  setIsLoading(false);
+              }
+          } catch (error) {
+              if (retryCount < MAX_RETRIES) {
+                  retryCount++;
+                  setTimeout(checkVideoStatus, 10000);
+              } else {
+                  setError('Error checking video status');
+                  setIsLoading(false);
+              }
+          }
+      };
+  
+      checkVideoStatus();
+  };
 
     checkForVideo();
-  }, []);
+  }, [retryCount]);
 
   const handleDownload = async () => {
     if (!videoUrl) return;
     try {
-      const response = await fetch(videoUrl);
+      const response = await fetch(videoUrl, {
+        headers: {
+          'Accept': 'video/mp4',
+          'Origin': 'https://visiogenweb.vercel.app'
+        }
+      });
+      
+      if (!response.ok) throw new Error('Download failed');
+      
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -54,8 +81,8 @@ const DownloadPage = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch {
-      setError('Failed to download video');
+    } catch (error) {
+      setError('Failed to download video: ' + error.message);
     }
   };
 

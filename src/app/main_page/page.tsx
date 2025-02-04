@@ -176,41 +176,38 @@ const VisioGenEditor: React.FC = () => {
   const handleGenerate = async () => {
     setIsLoading(true);
     try {
-      const requestData = {
-        text: text,
-        font: font,
-        videoType: videoType,
-        voiceType: voiceType,
-        speechSpeed: 1.0
-      };
+        const requestData = {
+            text: text,
+            font: font,
+            videoType: videoType,
+            voiceType: voiceType,
+            speechSpeed: 1.0
+        };
 
-      const response = await fetch('https://dexxtech.xyz/endpoint', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData)
-      });
+        // Store data in localStorage before making request
+        localStorage.setItem('generationData', JSON.stringify({
+            ...requestData,
+            isProcessing: true,
+            startTime: new Date().toISOString()
+        }));
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+        // Make request but don't wait for completion
+        fetch('https://dexxtech.xyz/endpoint', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        }).catch(console.error); // Log error but don't wait
 
-      const data = await response.json();
-      console.log(data)
-      // Store both request parameters and response data
-      const generationData = {
-        ...requestData,
-        videoUrl: data.video_url
-      };
-      localStorage.setItem('generationData', JSON.stringify(generationData));
+        // Redirect immediately
+        router.push('/download_page');
 
-      router.push('/download_page');
     } catch (error) {
-      console.error('Generation failed:', error);
-      setIsLoading(false);
+        console.error('Error starting generation:', error);
+        setIsLoading(false);
     }
-  };
+};
 
   return (
     <Container>
