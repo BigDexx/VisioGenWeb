@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 
+// Styled Components
 const Container = styled.div`
   min-height: 100vh;
   background: #0B0E14;
   position: relative;
 `;
+
 
 const Navbar = styled.nav`
   padding: 1rem 2rem;
@@ -163,15 +165,6 @@ const LoaderText = styled.div`
   text-align: center;
 `;
 
-const ErrorMessage = styled.div`
-  color: #ff4444;
-  background: rgba(255, 68, 68, 0.1);
-  padding: 1rem;
-  border-radius: 4px;
-  margin-top: 1rem;
-`;
-
-
 const VisioGenEditor: React.FC = () => {
   const router = useRouter();
   const [text, setText] = useState('');
@@ -179,14 +172,9 @@ const VisioGenEditor: React.FC = () => {
   const [videoType, setVideoType] = useState('Minecraft');
   const [voiceType, setVoiceType] = useState('Male');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState<string>('');
 
   const handleGenerate = async () => {
     setIsLoading(true);
-    setError(null);
-    setProgress('Initiating video generation...');
-
     try {
       const requestData = {
         text: text,
@@ -209,28 +197,24 @@ const VisioGenEditor: React.FC = () => {
       }
 
       const data = await response.json();
-      
-      if (data.status === 'success' && data.job_id) {
-        const generationData = {
-          ...requestData,
-          jobId: data.job_id,
-          status: 'processing'
-        };
-        localStorage.setItem('generationData', JSON.stringify(generationData));
-        router.push('/download_page');
-      } else {
-        throw new Error('Failed to start video generation');
-      }
+      console.log(data)
+      // Store both request parameters and response data
+      const generationData = {
+        ...requestData,
+        videoUrl: data.video_url
+      };
+      localStorage.setItem('generationData', JSON.stringify(generationData));
+
+      router.push('/download_page');
     } catch (error) {
       console.error('Generation failed:', error);
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
       setIsLoading(false);
     }
   };
 
   return (
     <Container>
-      <Head>
+        <Head>
         <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
       </Head>
       {isLoading && (
@@ -238,8 +222,8 @@ const VisioGenEditor: React.FC = () => {
           <LoaderContainer>
             <LoaderSpinner />
             <LoaderText>
-              {progress}<br/>
-              Please wait while we process your request
+              Generating your video...<br/>
+              This may take a few minutes
             </LoaderText>
           </LoaderContainer>
         </LoaderOverlay>
@@ -312,8 +296,6 @@ const VisioGenEditor: React.FC = () => {
             </GenerateButton>
           </OptionsSection>
         </EditorLayout>
-        
-        {error && <ErrorMessage>{error}</ErrorMessage>}
       </MainContent>
     </Container>
   );
