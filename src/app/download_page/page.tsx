@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -13,42 +12,14 @@ import {
   GenerateAnotherButton
 } from './styles';
 
-const DownloadPage: React.FC = () => {
+const DownloadPage = () => {
   const router = useRouter();
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [statusMessage, setStatusMessage] = useState<string>('Initializing...');
 
   useEffect(() => {
-    const pollTaskStatus = async (taskId: string) => {
-      try {
-        const response = await fetch(`https://dexxtech.xyz/endpoint/status/${taskId}`);
-        const data = await response.json();
-
-        switch (data.status) {
-          case 'SUCCESS':
-            setVideoUrl(data.video_url);
-            setIsLoading(false);
-            return true;
-          case 'FAILURE':
-            setError(data.error || 'Video generation failed');
-            setIsLoading(false);
-            return true;
-          case 'PROCESSING':
-            setStatusMessage(data.status_message || 'Processing...');
-            return false;
-          default:
-            return false;
-        }
-      } catch (error) {
-        setError('Failed to check video status');
-        setIsLoading(false);
-        return true;
-      }
-    };
-
-    const startPolling = async () => {
+    const checkForVideo = async () => {
       const generationData = localStorage.getItem('generationData');
       if (!generationData) {
         setError('No video generation data found');
@@ -56,20 +27,18 @@ const DownloadPage: React.FC = () => {
         return;
       }
 
-      const { taskId } = JSON.parse(generationData);
-      
-      const pollInterval = setInterval(async () => {
-        const isDone = await pollTaskStatus(taskId);
-        if (isDone) {
-          clearInterval(pollInterval);
-        }
-      }, 5000); // Poll every 5 seconds
+      const data = JSON.parse(generationData);
+      if (data.videoUrl) {
+        setVideoUrl(data.videoUrl);
+        setIsLoading(false);
+        return;
+      }
 
-      // Cleanup
-      return () => clearInterval(pollInterval);
+      setVideoUrl(data.videoUrl);
+      setIsLoading(false);
     };
 
-    startPolling();
+    checkForVideo();
   }, []);
 
   const handleDownload = async () => {
@@ -131,7 +100,7 @@ const DownloadPage: React.FC = () => {
                 </DownloadButton>
         </PreviewContainer>
         <div style={{ position: 'absolute', bottom: '20px', right: '10px' }}>
-                  <GenerateAnotherButton onClick={() => router.push('/')}>
+                  <GenerateAnotherButton onClick={() => router.push('/main_page')}>
                     Generate Another Video
                   </GenerateAnotherButton>
                 </div>
