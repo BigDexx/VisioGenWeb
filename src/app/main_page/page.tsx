@@ -197,11 +197,11 @@ const VisioGenEditor: React.FC = () => {
       }
 
       const data = await response.json();
-      console.log(data)
-      // Store both request parameters and response data
+      
+      // Store task ID and request parameters
       const generationData = {
         ...requestData,
-        videoUrl: data.video_url
+        taskId: data.task_id
       };
       localStorage.setItem('generationData', JSON.stringify(generationData));
 

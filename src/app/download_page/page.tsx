@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,14 +13,42 @@ import {
   GenerateAnotherButton
 } from './styles';
 
-const DownloadPage = () => {
+const DownloadPage: React.FC = () => {
   const router = useRouter();
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('Initializing...');
 
   useEffect(() => {
-    const checkForVideo = async () => {
+    const pollTaskStatus = async (taskId: string) => {
+      try {
+        const response = await fetch(`https://dexxtech.xyz/endpoint/status/${taskId}`);
+        const data = await response.json();
+
+        switch (data.status) {
+          case 'SUCCESS':
+            setVideoUrl(data.video_url);
+            setIsLoading(false);
+            return true;
+          case 'FAILURE':
+            setError(data.error || 'Video generation failed');
+            setIsLoading(false);
+            return true;
+          case 'PROCESSING':
+            setStatusMessage(data.status_message || 'Processing...');
+            return false;
+          default:
+            return false;
+        }
+      } catch (error) {
+        setError('Failed to check video status');
+        setIsLoading(false);
+        return true;
+      }
+    };
+
+    const startPolling = async () => {
       const generationData = localStorage.getItem('generationData');
       if (!generationData) {
         setError('No video generation data found');
@@ -27,18 +56,20 @@ const DownloadPage = () => {
         return;
       }
 
-      const data = JSON.parse(generationData);
-      if (data.videoUrl) {
-        setVideoUrl(data.videoUrl);
-        setIsLoading(false);
-        return;
-      }
+      const { taskId } = JSON.parse(generationData);
+      
+      const pollInterval = setInterval(async () => {
+        const isDone = await pollTaskStatus(taskId);
+        if (isDone) {
+          clearInterval(pollInterval);
+        }
+      }, 5000); // Poll every 5 seconds
 
-      setVideoUrl(data.videoUrl);
-      setIsLoading(false);
+      // Cleanup
+      return () => clearInterval(pollInterval);
     };
 
-    checkForVideo();
+    startPolling();
   }, []);
 
   const handleDownload = async () => {
