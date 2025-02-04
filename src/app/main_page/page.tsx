@@ -2,7 +2,168 @@
 import Head from 'next/head';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import * as S from './styles';
+import styled from 'styled-components';
+
+// Styled Components
+const Container = styled.div`
+  min-height: 100vh;
+  background: #0B0E14;
+  position: relative;
+`;
+
+
+const Navbar = styled.nav`
+  padding: 1rem 2rem;
+  background: #000000;
+`;
+
+const NavTitle = styled.h1`
+  color: white;
+  font-size: 1.5rem;
+`;
+
+const TitleSpan = styled.span`
+  color: #2196f3;
+`;
+
+const MainContent = styled.main`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+`;
+
+const Title = styled.h2`
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+`;
+
+const TitleAccent = styled.span`
+   color: #2DFFA0; 
+`;
+
+const EditorLayout = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  background: #151922;
+  padding: 2rem;
+  border-radius: 8px;
+`;
+
+const TextInputSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const Label = styled.label`
+  color: white;
+  font-size: 1.2rem;
+`;
+
+const TextArea = styled.textarea`
+  height: 300px;
+  padding: 1rem;
+  background: #151922; 
+  border: 1px solid #4d4d4d;
+  border-radius: 4px;
+  color: white;
+  font-size: 1rem;
+  resize: none;
+
+  &:focus {
+    outline: none;
+    border-color: #2DFFA0;
+  }
+`;
+
+const OptionsSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
+
+const OptionGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const Select = styled.select`
+  padding: 0.5rem;
+  background: #3d3d3d;
+  border: 1px solid #4d4d4d;
+  border-radius: 4px;
+  color: white;
+  font-size: 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: #2196f3;
+  }
+`;
+
+const GenerateButton = styled.button`
+  padding: 1rem;
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background: #1976d2;
+  }
+
+  &:disabled {
+    background: #666;
+    cursor: not-allowed;
+  }
+`;
+
+const LoaderOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const LoaderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+`;
+
+const LoaderSpinner = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #2196f3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+const LoaderText = styled.div`
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+`;
 
 const VisioGenEditor: React.FC = () => {
   const router = useRouter();
@@ -11,12 +172,9 @@ const VisioGenEditor: React.FC = () => {
   const [videoType, setVideoType] = useState('Minecraft');
   const [voiceType, setVoiceType] = useState('Male');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     setIsLoading(true);
-    setError(null);
-    
     try {
       const requestData = {
         text: text,
@@ -26,7 +184,7 @@ const VisioGenEditor: React.FC = () => {
         speechSpeed: 1.0
       };
 
-      const response = await fetch('https://dexxtech.xyz/start_generation', {
+      const response = await fetch('https://dexxtech.xyz/endpoint', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,73 +196,64 @@ const VisioGenEditor: React.FC = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const { job_id } = await response.json();
-
-      // Store generation data
+      const data = await response.json();
+      console.log(data)
+      // Store both request parameters and response data
       const generationData = {
         ...requestData,
-        job_id,
-        timestamp: new Date().toISOString()
+        videoUrl: data.video_url
       };
       localStorage.setItem('generationData', JSON.stringify(generationData));
 
       router.push('/download_page');
     } catch (error) {
       console.error('Generation failed:', error);
-      setError('Failed to start video generation. Please try again.');
       setIsLoading(false);
     }
   };
 
   return (
-    <S.Container>
-      <Head>
+    <Container>
+        <Head>
         <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
       </Head>
-
       {isLoading && (
-        <S.LoaderOverlay>
-          <S.LoaderContainer>
-            <S.LoaderSpinner />
-            <S.LoaderText>
-              Starting video generation...<br/>
-              Please wait
-            </S.LoaderText>
-          </S.LoaderContainer>
-        </S.LoaderOverlay>
+        <LoaderOverlay>
+          <LoaderContainer>
+            <LoaderSpinner />
+            <LoaderText>
+              Generating your video...<br/>
+              This may take a few minutes
+            </LoaderText>
+          </LoaderContainer>
+        </LoaderOverlay>
       )}
 
-      <S.Navbar>
-        <S.NavTitle>
-          Welcome to <S.TitleSpan>VisioGen</S.TitleSpan>
-        </S.NavTitle>
-      </S.Navbar>
+      <Navbar>
+        <NavTitle>
+          Welcome to <TitleSpan>VisioGen</TitleSpan>
+        </NavTitle>
+      </Navbar>
 
-      <S.MainContent>
-        <S.Title>
-          <S.TitleAccent>Create an</S.TitleAccent> instant short
-        </S.Title>
+      <MainContent>
+        <Title>
+          <TitleAccent>Create an</TitleAccent> instant short
+        </Title>
 
-        {error && (
-          <div style={{ color: 'red', marginBottom: '1rem' }}>
-            {error}
-          </div>
-        )}
-
-        <S.EditorLayout>
-          <S.TextInputSection>
-            <S.Label>Enter your story:</S.Label>
-            <S.TextArea
+        <EditorLayout>
+          <TextInputSection>
+            <Label>Enter your story:</Label>
+            <TextArea
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Type here..."
             />
-          </S.TextInputSection>
+          </TextInputSection>
 
-          <S.OptionsSection>
-            <S.OptionGroup>
-              <S.Label>Choose a Font:</S.Label>
-              <S.Select
+          <OptionsSection>
+            <OptionGroup>
+              <Label>Choose a Font:</Label>
+              <Select
                 value={font}
                 onChange={(e) => setFont(e.target.value)}
               >
@@ -112,12 +261,12 @@ const VisioGenEditor: React.FC = () => {
                 <option value="Handscript">Handscript</option>
                 <option value="Shikaku-serif">Shikaku-serif</option>
                 <option value="Arvo-Bold">Arvo-Bold</option>
-              </S.Select>
-            </S.OptionGroup>
+              </Select>
+            </OptionGroup>
 
-            <S.OptionGroup>
-              <S.Label>Choose Video Type:</S.Label>
-              <S.Select
+            <OptionGroup>
+              <Label>Choose Video Type:</Label>
+              <Select
                 value={videoType}
                 onChange={(e) => setVideoType(e.target.value)}
               >
@@ -125,30 +274,30 @@ const VisioGenEditor: React.FC = () => {
                 <option value="GTA">GTA</option>
                 <option value="Dragon Ball">Dragon Ball</option>
                 <option value="COD">COD</option>
-              </S.Select>
-            </S.OptionGroup>
+              </Select>
+            </OptionGroup>
 
-            <S.OptionGroup>
-              <S.Label>Choose Voice Type:</S.Label>
-              <S.Select
+            <OptionGroup>
+              <Label>Choose Voice Type:</Label>
+              <Select
                 value={voiceType}
                 onChange={(e) => setVoiceType(e.target.value)}
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-              </S.Select>
-            </S.OptionGroup>
+              </Select>
+            </OptionGroup>
 
-            <S.Button
+            <GenerateButton
               onClick={handleGenerate}
               disabled={isLoading || !text.trim()}
             >
-              {isLoading ? 'Starting Generation...' : 'Generate Video'}
-            </S.Button>
-          </S.OptionsSection>
-        </S.EditorLayout>
-      </S.MainContent>
-    </S.Container>
+              {isLoading ? 'Generating...' : 'Generate Video'}
+            </GenerateButton>
+          </OptionsSection>
+        </EditorLayout>
+      </MainContent>
+    </Container>
   );
 };
 
