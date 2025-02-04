@@ -100,7 +100,7 @@ const DownloadPage = () => {
                 </DownloadButton>
         </PreviewContainer>
         <div style={{ position: 'absolute', bottom: '20px', right: '10px' }}>
-                  <GenerateAnotherButton onClick={() => router.push('/main_page')}>
+                  <GenerateAnotherButton onClick={() => router.push('/')}>
                     Generate Another Video
                   </GenerateAnotherButton>
                 </div>
