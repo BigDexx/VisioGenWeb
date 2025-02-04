@@ -1,131 +1,203 @@
+// styles.ts
 import styled from 'styled-components';
 
 export const Container = styled.div`
   min-height: 100vh;
-  background-color: #111827;
-  color: #f3f4f6;
+  background: #0B0E14;
+  position: relative;
 `;
 
 export const Navbar = styled.nav`
-  background-color: #1f2937;
-  padding: 1rem;
+  padding: 1rem 2rem;
+  background: #000000;
 `;
 
-export const NavTitle = styled.div`
-  display: flex;
-  align-items: center;
+export const NavTitle = styled.h1`
+  color: white;
   font-size: 1.5rem;
-  font-weight: bold;
 `;
 
 export const TitleSpan = styled.span`
-  color: #60a5fa;
+  color: #2196f3;
 `;
 
 export const MainContent = styled.main`
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 2rem;
 `;
 
-export const Title = styled.h1`
-  font-size: 2.25rem;
+export const Title = styled.h2`
+  color: white;
+  font-size: 2.5rem;
   margin-bottom: 2rem;
 `;
 
 export const TitleAccent = styled.span`
-  color: #34d399;
+  color: #2DFFA0;
 `;
 
 export const EditorLayout = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
   gap: 2rem;
-  max-width: 1000px;
-  margin: 0 auto;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: space-between;
-  }
+  background: #151922;
+  padding: 2rem;
+  border-radius: 8px;
 `;
 
 export const TextInputSection = styled.div`
-  width: 100%;
-  
-  @media (min-width: 768px) {
-    width: 58%;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 export const Label = styled.label`
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+  color: white;
+  font-size: 1.2rem;
 `;
 
 export const TextArea = styled.textarea`
-  width: 100%;
-  height: 32rem;
+  height: 300px;
   padding: 1rem;
-  background-color: #0f172a;
-  border: 1px solid #1e3a8a;
-  border-radius: 0.5rem;
-  color: #f3f4f6;
-  resize: none;
+  background: #151922;
+  border: 1px solid #4d4d4d;
+  border-radius: 4px;
+  color: white;
   font-size: 1rem;
+  resize: none;
 
   &:focus {
     outline: none;
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+    border-color: #2DFFA0;
   }
 `;
 
 export const OptionsSection = styled.div`
-  width: 100%;
-  
-  @media (min-width: 768px) {
-    width: 280px;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 `;
 
 export const OptionGroup = styled.div`
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 `;
 
 export const Select = styled.select`
-  width: 100%;
   padding: 0.5rem;
-  background-color: #1f2937;
-  border: 1px solid #374151;
-  border-radius: 0.5rem;
-  color: #f3f4f6;
+  background: #3d3d3d;
+  border: 1px solid #4d4d4d;
+  border-radius: 4px;
+  color: white;
   font-size: 1rem;
 
   &:focus {
     outline: none;
-    border-color: #60a5fa;
+    border-color: #2196f3;
   }
 `;
 
-export const GenerateButton = styled.button`
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #2563eb;
+export const Button = styled.button`
+  padding: 1rem;
+  background: #2196f3;
   color: white;
   border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
+  border-radius: 4px;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background 0.3s;
 
   &:hover {
-    background-color: #1d4ed8;
+    background: #1976d2;
   }
 
   &:disabled {
-    background-color: #6b7280;
+    background: #666;
     cursor: not-allowed;
   }
-`;  
+`;
+
+export const LoaderOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+export const LoaderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+`;
+
+export const LoaderSpinner = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #2196f3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+export const LoaderText = styled.div`
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+`;
+
+export const PreviewContainer = styled.div`
+  background: #151922;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 2rem;
+`;
+
+export const PreviewHeader = styled.div`
+  background: #1E2430;
+  padding: 1.5rem;
+  border-bottom: 1px solid #2A3140;
+`;
+
+export const PreviewText = styled.h3`
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
+`;
+
+export const VideoPreview = styled.div`
+  padding: 2rem;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const DownloadButton = styled(Button)`
+  width: 100%;
+  max-width: 300px;
+  margin: 1rem auto;
+  display: block;
+`;
+
+export const GenerateAnotherButton = styled(Button)`
+  background: #4CAF50;
+  &:hover {
+    background: #388E3C;
+  }
+`;
