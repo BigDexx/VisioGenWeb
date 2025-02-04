@@ -4,13 +4,11 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 
-// Styled Components
 const Container = styled.div`
   min-height: 100vh;
   background: #0B0E14;
   position: relative;
 `;
-
 
 const Navbar = styled.nav`
   padding: 1rem 2rem;
@@ -165,6 +163,15 @@ const LoaderText = styled.div`
   text-align: center;
 `;
 
+const ErrorMessage = styled.div`
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+`;
+
+
 const VisioGenEditor: React.FC = () => {
   const router = useRouter();
   const [text, setText] = useState('');
@@ -172,46 +179,58 @@ const VisioGenEditor: React.FC = () => {
   const [videoType, setVideoType] = useState('Minecraft');
   const [voiceType, setVoiceType] = useState('Male');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState<string>('');
 
   const handleGenerate = async () => {
     setIsLoading(true);
+    setError(null);
+    setProgress('Initiating video generation...');
+
     try {
-        const requestData = {
-            text: text,
-            font: font,
-            videoType: videoType,
-            voiceType: voiceType,
-            speechSpeed: 1.0
+      const requestData = {
+        text: text,
+        font: font,
+        videoType: videoType,
+        voiceType: voiceType,
+        speechSpeed: 1.0
+      };
+
+      const response = await fetch('https://dexxtech.xyz/endpoint', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.status === 'success' && data.job_id) {
+        const generationData = {
+          ...requestData,
+          jobId: data.job_id,
+          status: 'processing'
         };
-
-        // Store data in localStorage before making request
-        localStorage.setItem('generationData', JSON.stringify({
-            ...requestData,
-            isProcessing: true,
-            startTime: new Date().toISOString()
-        }));
-
-        // Make request but don't wait for completion
-        fetch('https://dexxtech.xyz/endpoint', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData)
-        }).catch(console.error); // Log error but don't wait
-
-        // Redirect immediately
+        localStorage.setItem('generationData', JSON.stringify(generationData));
         router.push('/download_page');
-
+      } else {
+        throw new Error('Failed to start video generation');
+      }
     } catch (error) {
-        console.error('Error starting generation:', error);
-        setIsLoading(false);
+      console.error('Generation failed:', error);
+      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      setIsLoading(false);
     }
-};
+  };
 
   return (
     <Container>
-        <Head>
+      <Head>
         <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
       </Head>
       {isLoading && (
@@ -219,8 +238,8 @@ const VisioGenEditor: React.FC = () => {
           <LoaderContainer>
             <LoaderSpinner />
             <LoaderText>
-              Generating your video...<br/>
-              This may take a few minutes
+              {progress}<br/>
+              Please wait while we process your request
             </LoaderText>
           </LoaderContainer>
         </LoaderOverlay>
@@ -293,6 +312,8 @@ const VisioGenEditor: React.FC = () => {
             </GenerateButton>
           </OptionsSection>
         </EditorLayout>
+        
+        {error && <ErrorMessage>{error}</ErrorMessage>}
       </MainContent>
     </Container>
   );
