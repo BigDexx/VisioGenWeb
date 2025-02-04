@@ -12,6 +12,25 @@ import {
   GenerateAnotherButton
 } from './styles';
 
+const Loader = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <div style={{
+      border: '8px solid #f3f3f3',
+      borderTop: '8px solid #3498db',
+      borderRadius: '50%',
+      width: '60px',
+      height: '60px',
+      animation: 'spin 1s linear infinite'
+    }} />
+    <style jsx>{`
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `}</style>
+  </div>
+);
+
 const DownloadPage = () => {
   const router = useRouter();
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -23,40 +42,40 @@ const DownloadPage = () => {
     const checkForVideo = async () => {
       const MAX_RETRIES = 60; // 10 minutes total (10s intervals)
       let retryCount = 0;
-  
+
       const checkVideoStatus = async () => {
-          try {
-              const response = await fetch('https://dexxtech.xyz/endpoint/video', {
-                  method: 'HEAD'
-              });
-  
-              if (response.ok) {
-                  setVideoUrl('https://dexxtech.xyz/endpoint/video');
-                  setIsLoading(false);
-                  return;
-              }
-  
-              if (retryCount < MAX_RETRIES) {
-                  retryCount++;
-                  setTimeout(checkVideoStatus, 10000); // Check every 10 seconds
-              } else {
-                  setError('Video generation took too long. Try refreshing the page.');
-                  setIsLoading(false);
-              }
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          } catch (error) {
-              if (retryCount < MAX_RETRIES) {
-                  retryCount++;
-                  setTimeout(checkVideoStatus, 10000);
-              } else {
-                  setError('Error checking video status');
-                  setIsLoading(false);
-              }
+        try {
+          const response = await fetch('https://dexxtech.xyz/endpoint/video', {
+            method: 'HEAD'
+          });
+
+          if (response.ok) {
+            setVideoUrl('https://dexxtech.xyz/endpoint/video');
+            setIsLoading(false);
+            return;
           }
+
+          if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            setTimeout(checkVideoStatus, 10000);
+          } else {
+            setError('Video generation took too long. Try refreshing the page.');
+            setIsLoading(false);
+          }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+          if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            setTimeout(checkVideoStatus, 10000);
+          } else {
+            setError('Error checking video status');
+            setIsLoading(false);
+          }
+        }
       };
-  
+
       checkVideoStatus();
-  };
+    };
 
     checkForVideo();
   }, [retryCount]);
@@ -70,9 +89,9 @@ const DownloadPage = () => {
           'Origin': 'https://visiogenweb.vercel.app'
         }
       });
-      
+
       if (!response.ok) throw new Error('Download failed');
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -102,9 +121,7 @@ const DownloadPage = () => {
           </PreviewHeader>
           <VideoPreview>
             {isLoading ? (
-              <div style={{ textAlign: 'center', padding: '20px' }}>
-                <p>Please wait while we generate your video...</p>
-              </div>
+              <Loader />
             ) : error ? (
               <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>
                 {error}
@@ -118,8 +135,6 @@ const DownloadPage = () => {
                   <source src={videoUrl} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
-                
-                
               </>
             ) : (
               <div style={{ textAlign: 'center', padding: '20px' }}>
@@ -127,15 +142,17 @@ const DownloadPage = () => {
               </div>
             )}
           </VideoPreview>
-          <DownloadButton onClick={handleDownload}>
-                  Download Video
-                </DownloadButton>
+          {!isLoading && !error && videoUrl && (
+            <DownloadButton onClick={handleDownload}>
+              Download Video
+            </DownloadButton>
+          )}
         </PreviewContainer>
         <div style={{ position: 'absolute', bottom: '20px', right: '10px' }}>
-                  <GenerateAnotherButton onClick={() => router.push('/')}>
-                    Generate Another Video
-                  </GenerateAnotherButton>
-                </div>
+          <GenerateAnotherButton onClick={() => router.push('/')}> 
+            Generate Another Video
+          </GenerateAnotherButton>
+        </div>
       </MainContent>
     </Container>
   );
